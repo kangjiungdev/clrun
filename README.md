@@ -2,6 +2,32 @@
 
 간단한 C/C++ 컴파일러 실행 스크립트입니다. `clang`이나 `clang++`을 사용해서 컴파일하고 실행까지 자동으로 합니다.
 
+## 설치
+
+### macOS (Intel)
+
+```bash
+curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.1.0/clrun-x86_64-apple-darwin.zip -o clrun.zip
+
+unzip clrun.zip
+
+sudo mv clrun /usr/local/bin/
+
+rm clrun.zip
+```
+
+### Linux (x86_64)
+
+```bash
+curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.1.0/clrun-x86_64-unknown-linux-gnu.tar.gz -o clrun.zip
+
+unzip clrun.zip
+
+sudo mv clrun /usr/local/bin/
+
+rm clrun.zip
+```
+
 ## 사용법
 
 ```bash
