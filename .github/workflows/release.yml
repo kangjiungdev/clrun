@@ -21,9 +21,6 @@ jobs:
           - os: macos-latest
             target: x86_64-apple-darwin
             ext: zip
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            ext: zip
 
     steps:
       - uses: actions/checkout@v3
@@ -43,7 +40,7 @@ jobs:
           cd target/${{ matrix.target }}/release
           BINARY_NAME=clrun
           if [[ "${{ matrix.ext }}" == "zip" ]]; then
-            7z a ${BINARY_NAME}-${{ matrix.target }}.zip $BINARY_NAME.exe || 7z a ${BINARY_NAME}-${{ matrix.target }}.zip $BINARY_NAME
+            7z a ${BINARY_NAME}-${{ matrix.target }}.zip $BINARY_NAME
           else
             tar -czf ${BINARY_NAME}-${{ matrix.target }}.tar.gz $BINARY_NAME
           fi
