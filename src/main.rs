@@ -71,12 +71,13 @@ fn run_command(compiler: Language, file: &str) {
             .expect(&format!("{ERROR} Failed to delete binary file"));
     } else {
         eprintln!("{ERROR} Compile failed");
+        std::process::exit(1);
     }
 }
 
 fn get_base_path() -> PathBuf {
     let clrun_path = dirs::home_dir()
-        .expect("No home directory")
+        .expect(&format!("{ERROR} No home directory"))
         .join(".clrun")
         .join("build");
     fs::create_dir_all(&clrun_path).expect(&format!("{ERROR} Failed to create .clrun directory"));
