@@ -25,7 +25,7 @@ tar -xzf clrun.tar.gz
 
 sudo mv clrun /usr/local/bin/
 
-rm clrun.zip
+rm clrun.tar.gz
 ```
 
 ## 사용법
