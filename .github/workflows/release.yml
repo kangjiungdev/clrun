@@ -50,6 +50,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            target/${{ matrix.target }}/release/your-cli-*.${{ matrix.ext }}
+            target/${{ matrix.target }}/release/clrun-*.${{ matrix.ext }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
