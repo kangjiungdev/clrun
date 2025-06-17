@@ -7,7 +7,7 @@
 ### macOS (Intel)
 
 ```bash
-curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.1.0/clrun-x86_64-apple-darwin.zip -o clrun.zip
+curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.1.1/clrun-x86_64-apple-darwin.zip -o clrun.zip
 
 unzip clrun.zip
 
@@ -19,7 +19,7 @@ rm clrun.zip
 ### Linux (x86_64)
 
 ```bash
-curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.1.0/clrun-x86_64-unknown-linux-gnu.tar.gz -o clrun.tar.gz
+curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.1.1/clrun-x86_64-unknown-linux-gnu.tar.gz -o clrun.tar.gz
 
 tar -xzf clrun.tar.gz
 
