@@ -19,9 +19,9 @@ rm clrun.zip
 ### Linux (x86_64)
 
 ```bash
-curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.1.0/clrun-x86_64-unknown-linux-gnu.tar.gz -o clrun.zip
+curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.1.0/clrun-x86_64-unknown-linux-gnu.tar.gz -o clrun.tar.gz
 
-unzip clrun.zip
+tar -xzf clrun.tar.gz
 
 sudo mv clrun /usr/local/bin/
 
