@@ -43,7 +43,7 @@ rm clrun.tar.gz
 ### Options
 
 - `-h` 또는 `--help` : 도움말
-- `-v` 또는는 `--version` : 버전 정보
+- `-v` 또는 `--version` : 버전 정보
 
 ### 예시
 
