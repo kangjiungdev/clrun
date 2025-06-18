@@ -31,24 +31,19 @@ rm clrun.tar.gz
 ## 사용법
 
 ```bash
-Usage:
   clrun [options]
   clrun <language> <filename>
-
-Languages:
-  c         Compile and run as a C program
-  cpp       Compile and run as a C++ program
-  c++       Alias for cpp
-
-Options:
-  -h, --help       Show this help message
-  -v, --version    Show version information
 ```
 
-### language
+### Languages
 
 - `c` : C 코드 (`clang`)
 - `cpp` 또는 `c++` : C++ 코드 (`clang++`)
+
+### Options
+
+- `-h` 또는 `--help` : 도움말
+- `-v` 또는는 `--version` : 버전 정보
 
 ### 예시
 
