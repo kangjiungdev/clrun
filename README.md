@@ -7,7 +7,7 @@
 ### macOS (Intel)
 
 ```bash
-curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.1.1/clrun-x86_64-apple-darwin.zip -o clrun.zip
+curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.2.0/clrun-x86_64-apple-darwin.zip -o clrun.zip
 
 unzip clrun.zip
 
@@ -19,7 +19,7 @@ rm clrun.zip
 ### Linux (x86_64)
 
 ```bash
-curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.1.1/clrun-x86_64-unknown-linux-gnu.tar.gz -o clrun.tar.gz
+curl -L https://github.com/kangjiungdev/clrun/releases/download/v0.2.0/clrun-x86_64-unknown-linux-gnu.tar.gz -o clrun.tar.gz
 
 tar -xzf clrun.tar.gz
 
@@ -31,7 +31,18 @@ rm clrun.tar.gz
 ## 사용법
 
 ```bash
-clrun <language> <filename>
+Usage:
+  clrun [options]
+  clrun <language> <filename>
+
+Languages:
+  c         Compile and run as a C program
+  cpp       Compile and run as a C++ program
+  c++       Alias for cpp
+
+Options:
+  -h, --help       Show this help message
+  -v, --version    Show version information
 ```
 
 ### language
