@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use std::process::{self, Command};
 use std::{env, fs};
 
-const VERSION: &str = cli_version!("0.2.0"); // Version of Cli
+const VERSION: &str = concat!("clrun ", env!("CARGO_PKG_VERSION"));
 
 enum Language {
     C,
@@ -40,7 +40,7 @@ fn main() {
                 "--help" => println!("{HELP_MESSAGE}"),
                 "--version" => println!("{VERSION}"),
                 _ => {
-                    println_unexpected_arg!(s);
+                    eprintln_unexpected_arg!(s);
                     process::exit(1);
                 }
             }
@@ -51,7 +51,7 @@ fn main() {
                 "-h" => println!("{HELP_MESSAGE}"),
                 "-v" => println!("{VERSION}"),
                 _ => {
-                    println_unexpected_arg!(s);
+                    eprintln_unexpected_arg!(s);
                     process::exit(1);
                 }
             }
@@ -77,12 +77,12 @@ fn main() {
     run_command(compiler, &file);
 }
 
-struct Error<'a> {
-    error: &'a str,
+struct Error {
+    error: &'static str,
 }
 
-impl Error<'_> {
-    fn new(error: &'_ str) -> Error {
+impl Error {
+    const fn new(error: &'static str) -> Error {
         return Error { error };
     }
 }
@@ -122,6 +122,7 @@ fn run_command(compiler: Language, file: &str) {
     let binary_file_path = if let Some(s) = binary_file_path.to_str() {
         s
     } else {
+        // Os str인가 그런거 있다더라. 나중에 그걸로 바꿔서 UTF-8 아니어도 작동하게 해야겠다. 파일 이름 && 경로가 일반적인 OS면 무조건 UTF-8 이라 에러 생길일은 없겠다만.
         eprintln!(error_message!("Path is not valid UTF-8"));
         std::process::exit(1);
     };
@@ -132,29 +133,63 @@ fn run_command(compiler: Language, file: &str) {
         .arg(binary_file_path)
         .status();
 
+    // if문 너무 많아. 끔찍해
     if let Ok(status) = status {
         if status.success() {
-            let _ = Command::new(binary_file_path)
-                .status()
-                .expect(error_message!("Failed to run binary file"));
-            let _ = Command::new("rm")
-                .arg(binary_file_path)
-                .status()
-                .expect(error_message!("Failed to delete binary file"));
+            let run_binary_file = Command::new(binary_file_path).status();
+
+            let mut exit_code: u8 = 0;
+
+            if let Ok(status) = run_binary_file {
+                if !status.success() {
+                    exit_code = 1;
+                }
+            } else {
+                eprintln!(error_message!("Failed to run binary file"));
+                std::process::exit(1);
+            }
+
+            let success = fs::remove_file(binary_file_path);
+
+            if success.is_err() {
+                eprintln!(error_message!("Failed to delete binary file"));
+                std::process::exit(1);
+            }
+            /* 이렇게 해야지 실행시키고 삭제했던 바이너리 파일 exit status에 맞춰서 이 프로그램 exit code 정할 수 있음.
+            바이너리 파일 exit status 0 아니라고 바로 프로그램 exit 해버리면 파일 삭제 못하니까.
+            if !status.success() 에 삭제+exit1 코드를 넣거나 핸들러 함수로 분리해도 되긴 함.
+            if문에 넣는건 삭제 코드 또 한번 더 적게 되는거니까 비효율적.
+            핸들러 함수 사용하는건 어차피 두 번만 사용할건데 만드는건 오버 스탠스 + 핸들러 함수 인자가 사용할 스택 메모리를 따로 할당하기에
+            (인자로 받은 표현식의 값을 스택에 push하고 그 메모리에 접근(최적화 안되었을 때 방식. 변수를 인자에 경우 똑같은 데이터가 스택에 2번 저장되어 비효율적.)하는게 아니라
+            인자로 받는 표현식의 값이 저장된 스택 메모리(=호출 시 인자로 넣은 변수가 사용하는 스택 메모리)를 재사용하도록 LLVM이 최적화 할 가능성 있음) 비효율적이라 판단.
+            결론적으로 변수로 exit code 지정하는게 딱 한번만 적는거라 제일 좋다고 판단함. LLVM 최적화 때문에 이 방식이 핸들러 함수 사용보다 성능이 안 좋을 가능성도 있음. */
+            // 결론적으로 귀찮아서 핸들러 함수 안만듬.
+            // 나중에 기능 확장하게 되면 어쩔 수 없이 핸들러 함수 만들 수도 있긴 함.
+            // 바이너리 파일 실패 => 이 프로그램 exit code 1
+            // 바이너리 파일 성공 => 이 프로그램 exit code 0
+            process::exit(exit_code as i32);
         } else {
-            eprintln!("{}", error_message!("Compile failed"));
+            eprintln!(error_message!("Compile failed"));
             std::process::exit(1);
         }
     } else {
-        println!("{} {}", error_message!("Failed to run"), compiler);
+        eprintln!("{} {}", error_message!("Failed to run"), compiler);
+        std::process::exit(1);
     }
 }
 
 fn get_base_path() -> PathBuf {
-    let clrun_path = dirs::home_dir()
-        .expect(error_message!("No home directory"))
-        .join(".clrun")
-        .join("build");
-    fs::create_dir_all(&clrun_path).expect(error_message!("Failed to create .clrun directory"));
-    clrun_path
+    let home_path = dirs::home_dir();
+    if let Some(home_path) = home_path {
+        let clrun_path = home_path.join(".clrun").join("build");
+        let success = fs::create_dir_all(&clrun_path);
+        if let Err(_) = success {
+            eprintln!(error_message!("Failed to create .clrun directory"));
+            process::exit(1);
+        }
+        clrun_path
+    } else {
+        eprintln!(error_message!("No home directory"));
+        process::exit(1);
+    }
 }
